@@ -1,5 +1,10 @@
 ## KM Evaluation
 
+[![Build & Test](https://github.com/kbeaugrand/KernelMemory.Evaluation/actions/workflows/build_tests.yml/badge.svg)](https://github.com/kbeaugrand/KernelMemory.Evaluation/actions/workflows/build_test.yml)
+[![Create Release](https://github.com/kbeaugrand/KernelMemory.Evaluation/actions/workflows/publish.yml/badge.svg)](https://github.com/kbeaugrand/KernelMemory.Evaluation/actions/workflows/publish.yml)
+[![Version](https://img.shields.io/github/v/release/kbeaugrand/KernelMemory.Evaluation)](https://img.shields.io/github/v/release/kbeaugrand/KernelMemory.Evaluation)
+[![License](https://img.shields.io/github/license/kbeaugrand/KernelMemory.Evaluation)](https://img.shields.io/github/v/release/kbeaugrand/KernelMemory.Evaluation)
+
 This repository contains the code for the evaluation of the Knowledge Management (KM) system. The evaluation is based on the following metrics:
 
 - **Faithfulness**: Ensuring the generated text accurately represents the source information.
