@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
     <EmbeddedResource Include="Prompts\Evaluation\ContextRecall.txt">
       <CustomToolNamespace></CustomToolNamespace>
       <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
