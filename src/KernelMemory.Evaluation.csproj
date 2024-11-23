@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <IsPackable>false</IsPackable>
+    <IsPackable>true</IsPackable>
     <PackageId>Microsoft.KernelMemory.Evaluation</PackageId>
     <Product>Kernel Memory Evaluation application and modules</Product>
     <Description>Kernel Memory is a Copilot/Semantic Kernel Plugin and Memory Web Service to index and query any data and documents, using LLM and natural language, tracking sources and showing citations. The package contains the interfaces and models shared by all Kernel Memory packages.</Description>
