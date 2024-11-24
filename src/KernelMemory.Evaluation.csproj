@@ -17,6 +17,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Plugins\Evaluation\ContextPrecision.txt" />
+    <None Remove="Plugins\Evaluation\ContextRecall.txt" />
+    <None Remove="Plugins\Evaluation\Correctness.txt" />
+    <None Remove="Plugins\Evaluation\Faithfulness.txt" />
+    <None Remove="Plugins\Extraction\Keyphrase.txt" />
+    <None Remove="Plugins\Extraction\Question.txt" />
+    <None Remove="Plugins\Extraction\Statements.txt" />
+    <None Remove="Plugins\SyntheticData\ConditionalQuestion.txt" />
+    <None Remove="Plugins\SyntheticData\MultiContextQuestion.txt" />
+    <None Remove="Plugins\SyntheticData\QuestionAnswer.txt" />
+    <None Remove="Plugins\SyntheticData\ReasoningQuestion.txt" />
+    <None Remove="Plugins\SyntheticData\SeedQuestion.txt" />
+    <None Remove="Plugins\Transmutation\Translate.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
     <PackageReference Include="Microsoft.KernelMemory.Abstractions" Version="0.93.241118.1" />
     <PackageReference Include="Microsoft.KernelMemory.Core" Version="0.93.241118.1" />
@@ -26,55 +42,55 @@
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
-    <EmbeddedResource Include="Prompts\Evaluation\ContextRecall.txt">
+    <EmbeddedResource Include="Plugins\Evaluation\ContextRecall.txt">
       <CustomToolNamespace></CustomToolNamespace>
       <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Prompts\Evaluation\Correctness.txt">
+    <EmbeddedResource Include="Plugins\Evaluation\Correctness.txt">
       <CustomToolNamespace></CustomToolNamespace>
       <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Prompts\Evaluation\ContextPrecision.txt">
+    <EmbeddedResource Include="Plugins\Evaluation\ContextPrecision.txt">
       <CustomToolNamespace></CustomToolNamespace>
       <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Prompts\Extraction\Question.txt">
+    <EmbeddedResource Include="Plugins\Extraction\Question.txt">
       <CustomToolNamespace></CustomToolNamespace>
       <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Prompts\Evaluation\Faithfulness.txt">
+    <EmbeddedResource Include="Plugins\Evaluation\Faithfulness.txt">
       <CustomToolNamespace></CustomToolNamespace>
       <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Prompts\Extraction\Statements.txt">
+    <EmbeddedResource Include="Plugins\Extraction\Statements.txt">
       <CustomToolNamespace></CustomToolNamespace>
       <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Prompts\Extraction\Keyphrase.txt">
+    <EmbeddedResource Include="Plugins\Extraction\Keyphrase.txt">
+      <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
+      <CustomToolNamespace></CustomToolNamespace>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Plugins\SyntheticData\ConditionalQuestion.txt">
       <CustomToolNamespace></CustomToolNamespace>
       <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Prompts\SyntheticData\ConditionalQuestion.txt">
+    <EmbeddedResource Include="Plugins\SyntheticData\QuestionAnswer.txt">
       <CustomToolNamespace></CustomToolNamespace>
       <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Prompts\SyntheticData\QuestionAnswer.txt">
+    <EmbeddedResource Include="Plugins\SyntheticData\MultiContextQuestion.txt">
       <CustomToolNamespace></CustomToolNamespace>
       <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Prompts\SyntheticData\MultiContextQuestion.txt">
+    <EmbeddedResource Include="Plugins\SyntheticData\ReasoningQuestion.txt">
       <CustomToolNamespace></CustomToolNamespace>
       <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Prompts\SyntheticData\ReasoningQuestion.txt">
+    <EmbeddedResource Include="Plugins\SyntheticData\SeedQuestion.txt">
       <CustomToolNamespace></CustomToolNamespace>
       <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
     </EmbeddedResource>
-    <EmbeddedResource Include="Prompts\SyntheticData\SeedQuestion.txt">
-      <CustomToolNamespace></CustomToolNamespace>
-      <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Prompts\Transmutation\Translate.txt">
+    <EmbeddedResource Include="Plugins\Transmutation\Translate.txt">
       <CustomToolNamespace></CustomToolNamespace>
       <LogicalName>$([System.String]::new('%(RelativeDir)').Replace('\','/'))%(FileName)%(Extension)</LogicalName>
     </EmbeddedResource>
