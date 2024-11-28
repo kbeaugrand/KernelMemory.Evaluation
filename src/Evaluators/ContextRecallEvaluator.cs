@@ -9,7 +9,7 @@ namespace KernelMemory.Evaluation.Evaluators;
 #pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 #pragma warning disable SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
-internal class ContextRecallEvaluator : EvaluationEngine
+public class ContextRecallEvaluator : EvaluationEngine
 {
     private readonly Kernel kernel;
 
@@ -27,15 +27,15 @@ internal class ContextRecallEvaluator : EvaluationEngine
         this.kernel = kernel.Clone();
     }
 
-    internal async Task<float> Evaluate(TestSet.TestSet testSet, MemoryAnswer answer, Dictionary<string, object?> metadata)
+    public async Task<(float score, GroundTruthClassifications? evaluation)> EvaluateAsync(string question, string context, string groundOfTruth)
     {
         var classification = await Try(3, async (remainingTry) =>
         {
             var extraction = await EvaluateContextRecall.InvokeAsync(this.kernel, new KernelArguments
                 {
-                    { "question", testSet.Question },
-                    { "context", JsonSerializer.Serialize(answer.RelevantSources.SelectMany(c => c.Partitions.Select(x => x.Text))) },
-                    { "ground_truth", testSet.GroundTruth }
+                    { "question", question},
+                    { "context", context },
+                    { "ground_truth", groundOfTruth }
                 }).ConfigureAwait(false);
 
             return JsonSerializer.Deserialize<GroundTruthClassifications>(extraction.GetValue<string>()!);
@@ -43,23 +43,28 @@ internal class ContextRecallEvaluator : EvaluationEngine
 
         if (classification is null)
         {
-            return 0;
+            return (0, null);
         }
 
-        metadata.Add($"{nameof(ContextRecallEvaluator)}-Evaluation", classification);
-
-        return (float)classification.Evaluations.Count(c => c.Attributed > 0) / (float)classification.Evaluations.Count();
+        return ((float)classification.Evaluations.Count(c => c.Attributed > 0) / (float)classification.Evaluations.Count(), classification);
     }
 
+    public async Task<(float score, GroundTruthClassifications? evaluation)> EvaluateAsync(TestSet.TestSet testSet, MemoryAnswer answer)
+    {
+        return await EvaluateAsync(testSet.Question,
+                                  JsonSerializer.Serialize(answer.RelevantSources.SelectMany(c => c.Partitions.Select(x => x.Text))),
+                                  testSet.GroundTruth)
+            .ConfigureAwait(false);
+    }
 }
 
-internal class GroundTruthClassifications
+public class GroundTruthClassifications
 {
     [JsonPropertyName("evaluations")]
     public List<GroundTruthClassification> Evaluations { get; set; } = new();
 }
 
-internal class GroundTruthClassification
+public class GroundTruthClassification
 {
     public string Reason { get; set; } = null!;
 

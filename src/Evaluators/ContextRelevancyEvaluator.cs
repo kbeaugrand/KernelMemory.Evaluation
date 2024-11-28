@@ -9,7 +9,7 @@ namespace KernelMemory.Evaluation.Evaluators;
 #pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 #pragma warning disable SKEXP0010 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
-internal class ContextRelevancyEvaluator : EvaluationEngine
+public class ContextRelevancyEvaluator : EvaluationEngine
 {
     private readonly Kernel kernel;
 
@@ -18,8 +18,7 @@ internal class ContextRelevancyEvaluator : EvaluationEngine
         Temperature = 1e-8f,
         TopP = 1e-8f,
         Seed = 0,
-        ResponseFormat = "json_object",
-
+        ResponseFormat = "json_object"
     });
 
     public ContextRelevancyEvaluator(Kernel kernel)
@@ -27,41 +26,48 @@ internal class ContextRelevancyEvaluator : EvaluationEngine
         this.kernel = kernel.Clone();
     }
 
-    internal async Task<float> Evaluate(MemoryAnswer answer, Dictionary<string, object?> metadata)
+    public async Task<(float score, IEnumerable<ContextRelevancy>? evaluations)> EvaluateAsync(string question, string answer, IEnumerable<string> partitions)
     {
         var contextRelevancy = new List<ContextRelevancy>();
 
-        foreach (var item in answer.RelevantSources.SelectMany(c => c.Partitions))
+        foreach (var item in partitions)
         {
-            contextRelevancy.Add(await EvaluateContextRelevancy(item, answer).ConfigureAwait(false));
+            contextRelevancy.Add(await EvaluateContextRelevancy(question, answer, item).ConfigureAwait(false));
         }
 
-        metadata.Add($"{nameof(ContextRelevancyEvaluator)}-Evaluation", contextRelevancy);
-
-        return (float)contextRelevancy.Count(c => c.Verdict > 0) / (float)contextRelevancy.Count;
+        return ((float)contextRelevancy.Count(c => c.Verdict > 0) / (float)contextRelevancy.Count, contextRelevancy);
     }
 
-    internal async Task<ContextRelevancy> EvaluateContextRelevancy(Citation.Partition partition, MemoryAnswer answer)
+
+    public async Task<(float score, IEnumerable<ContextRelevancy>? evaluations)> EvaluateAsync(MemoryAnswer answer)
+    {
+        return await EvaluateAsync(answer.Question, 
+                                    answer.Result, 
+                                    answer.RelevantSources.SelectMany(c => c.Partitions.Select(x => x.Text)))
+            .ConfigureAwait(false);
+    }
+
+    internal async Task<ContextRelevancy> EvaluateContextRelevancy(string question, string answer, string context)
     {
         var relevancy = await Try(3, async (tryCount) =>
         {
             var verification = await EvaluateContext.InvokeAsync(this.kernel, new KernelArguments
                 {
-                    { "question", answer.Question },
-                    { "answer", answer.Result },
-                    { "context", partition.Text }
+                    { "question", question },
+                    { "answer", answer },
+                    { "context", context }
                 }).ConfigureAwait(false);
 
             return JsonSerializer.Deserialize<ContextRelevancy>(verification.GetValue<string>()!);
         }).ConfigureAwait(false);
 
-        relevancy!.PartitionText = partition.Text;
+        relevancy!.PartitionText = context;
 
         return relevancy;
     }
 }
 
-internal class ContextRelevancy
+public class ContextRelevancy
 {
     public string Reason { get; set; } = null!;
 

@@ -31,13 +31,13 @@ public class RelevanceEvaluator : EvaluationEngine
         this.textEmbeddingGenerationService = this.kernel.Services.GetRequiredService<ITextEmbeddingGenerationService>();
     }
 
-    internal async Task<float> Evaluate(MemoryAnswer answer, Dictionary<string, object?> metadata, int strictness = 3)
+    public async Task<(float score, IEnumerable<(RelevanceEvaluation, float)> evaluations)> EvaluateAsync(string question, string answer, string context, int strictness = 3)
     {
         var questionEmbeddings = await this.textEmbeddingGenerationService
-                                            .GenerateEmbeddingsAsync([answer.Question], this.kernel)
+                                            .GenerateEmbeddingsAsync([question], this.kernel)
                                             .ConfigureAwait(false);
 
-        var generatedQuestions = await GetEvaluations(answer, strictness)
+        var generatedQuestions = await GetEvaluations(answer, context, strictness)
                                         .ToArrayAsync()
                                         .ConfigureAwait(false);
 
@@ -48,14 +48,23 @@ public class RelevanceEvaluator : EvaluationEngine
         var evaluations = generatedQuestionsEmbeddings
                         .Select(c => TensorPrimitives.CosineSimilarity(questionEmbeddings.Single().Span, c.Span)
                         *
-                        generatedQuestions[generatedQuestionsEmbeddings.IndexOf(c)].Committal);
+                        generatedQuestions[generatedQuestionsEmbeddings.IndexOf(c)].Committal)
+                        .ToArray();
 
-        metadata.Add($"{nameof(RelevanceEvaluator)}-Evaluation", evaluations);
-
-        return evaluations.Average();
+        return (evaluations.Average(), generatedQuestions.Select((c, index) => (c, evaluations[index])));
     }
 
-    private async IAsyncEnumerable<RelevanceEvaluation> GetEvaluations(MemoryAnswer answer, int strictness)
+    public async Task<(float score, IEnumerable<(RelevanceEvaluation, float)> evaluations)> EvaluateAsync(MemoryAnswer answer, int strictness = 3)
+    {
+        return await EvaluateAsync(
+                answer.Question, 
+                answer.Result,
+                String.Join(Environment.NewLine, answer.RelevantSources.SelectMany(c => c.Partitions.Select(p => p.Text))), 
+                strictness)
+            .ConfigureAwait(false);
+    }
+
+    private async IAsyncEnumerable<RelevanceEvaluation> GetEvaluations(string answer, string context, int strictness)
     {
         foreach (var item in Enumerable.Range(0, strictness))
         {
@@ -63,8 +72,8 @@ public class RelevanceEvaluator : EvaluationEngine
             {
                 var extraction = await ExtractQuestion.InvokeAsync(this.kernel, new KernelArguments
                 {
-                    { "context", String.Join(Environment.NewLine, answer.RelevantSources.SelectMany(c => c.Partitions.Select(p => p.Text))) },
-                    { "answer", answer.Result }
+                    { "context", context },
+                    { "answer", answer }
                 }).ConfigureAwait(false);
 
                 return JsonSerializer.Deserialize<RelevanceEvaluation>(extraction.GetValue<string>()!);
@@ -74,7 +83,7 @@ public class RelevanceEvaluator : EvaluationEngine
         }
     }
 }
-internal class RelevanceEvaluation
+public class RelevanceEvaluation
 {
     public string Question { get; set; } = null!;
 

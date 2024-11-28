@@ -34,14 +34,14 @@ public class FaithfulnessEvaluator : EvaluationEngine
         this.kernel = kernel.Clone();
     }
 
-    public async Task<float> Evaluate(MemoryAnswer answer, Dictionary<string, object?> metadata)
+    public async Task<(float score, IEnumerable<StatementEvaluation>? evaluations)> EvaluateAsync(string question, string answer, string context)
     {
         var statements = await Try(3, async (remainingTry) =>
         {
             var extraction = await ExtractStatements.InvokeAsync(this.kernel, new KernelArguments
                 {
-                    { "question", answer.Question },
-                    { "answer", answer.Result }
+                    { "question", question },
+                    { "answer", answer }
                 }).ConfigureAwait(false);
 
             return JsonSerializer.Deserialize<StatementExtraction>(extraction.GetValue<string>()!);
@@ -49,15 +49,15 @@ public class FaithfulnessEvaluator : EvaluationEngine
 
         if (statements is null)
         {
-            return 0;
+            return (0, null);
         }
 
         var faithfulness = await Try(3, async (remainingTry) =>
         {
             var evaluation = await FaithfulnessEvaluation.InvokeAsync(this.kernel, new KernelArguments
             {
-                    { "context", String.Join(Environment.NewLine, answer.RelevantSources.SelectMany(c => c.Partitions.Select(p => p.Text))) },
-                    { "answer", answer.Result },
+                    { "context", context },
+                    { "answer", answer },
                     { "statements", JsonSerializer.Serialize(statements) }
                 }).ConfigureAwait(false);
 
@@ -68,22 +68,29 @@ public class FaithfulnessEvaluator : EvaluationEngine
 
         if (faithfulness is null)
         {
-            return 0;
+            return (0, null);
         }
 
-        metadata.Add($"{nameof(FaithfulnessEvaluator)}-Evaluation", faithfulness.Evaluations);
+        return ((float)faithfulness.Evaluations.Count(c => c.Verdict > 0) / (float)statements.Statements.Count(), faithfulness.Evaluations);
+    }
 
-        return (float)faithfulness.Evaluations.Count(c => c.Verdict > 0) / (float)statements.Statements.Count();
+    public async Task<(float score, IEnumerable<StatementEvaluation>? evaluations)> EvaluateAsync(MemoryAnswer answer)
+    {
+        return await EvaluateAsync(
+                question: answer.Question,
+                answer: answer.Result, 
+                context: String.Join(Environment.NewLine, answer.RelevantSources.SelectMany(c => c.Partitions.Select(p => p.Text))))
+            .ConfigureAwait(false);
     }
 }
 
-internal class FaithfulnessEvaluations
+public class FaithfulnessEvaluations
 {
     [JsonPropertyName("evaluations")]
     public List<StatementEvaluation> Evaluations { get; set; } = new List<StatementEvaluation>();
 }
 
-internal class StatementEvaluation
+public  class StatementEvaluation
 {
     public string Statement { get; set; } = null!;
 
