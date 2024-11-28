@@ -21,17 +21,21 @@ internal class AnswerSimilarityEvaluator : EvaluationEngine
         this.textEmbeddingGenerationService = this.kernel.Services.GetRequiredService<ITextEmbeddingGenerationService>();
     }
 
-    internal async Task<float> Evaluate(TestSet.TestSet testSet, MemoryAnswer answer, Dictionary<string, object?> metadata)
+    public async Task<float> EvaluateAsync(string truth, string answer)
     {
         var answerEmbeddings = await this.textEmbeddingGenerationService
-                                            .GenerateEmbeddingsAsync([testSet.GroundTruth, answer.Result], this.kernel)
+                                            .GenerateEmbeddingsAsync([truth, answer], this.kernel)
                                             .ConfigureAwait(false);
 
         var evaluation = TensorPrimitives.CosineSimilarity(answerEmbeddings.First().Span, answerEmbeddings.Last().Span);
 
-        metadata.Add($"{nameof(AnswerSimilarityEvaluator)}-Evaluation", evaluation);
-
         return evaluation;
+    }
+
+    public async Task<float> EvaluateAsync(TestSet.TestSet testSet, MemoryAnswer answer)
+    {
+        return await EvaluateAsync(testSet.GroundTruth, answer.Result)
+                .ConfigureAwait(false);
     }
 }
 

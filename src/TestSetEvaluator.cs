@@ -58,12 +58,6 @@ public class TestSetEvaluator
                 continue;
             }
 
-            var metadata = new Dictionary<string, object?>
-            {
-                { "Question", test.Question },
-                { "IndexName", this.indexName }
-            };
-
             yield return new QuestionEvaluation
             {
                 TestSet = test,
@@ -71,12 +65,12 @@ public class TestSetEvaluator
                 Elapsed = stopWatch.Elapsed,
                 Metrics = new()
                 {
-                    AnswerRelevancy = await Relevance.Evaluate(answer, metadata).ConfigureAwait(false),
-                    AnswerSemanticSimilarity = await AnswerSimilarity.Evaluate(test, answer, metadata).ConfigureAwait(false),
-                    AnswerCorrectness = await AnswerCorrectness.Evaluate(test, answer, metadata).ConfigureAwait(false),
-                    Faithfulness = await Faithfulness.Evaluate(answer, metadata).ConfigureAwait(false),
-                    ContextPrecision = await ContextRelevancy.Evaluate(answer, metadata).ConfigureAwait(false),
-                    ContextRecall = await ContextRecall.Evaluate(test, answer, metadata).ConfigureAwait(false),
+                    AnswerRelevancy = await Relevance.EvaluateAsync(answer).ConfigureAwait(false),
+                    AnswerSemanticSimilarity = await AnswerSimilarity.EvaluateAsync(test, answer).ConfigureAwait(false),
+                    AnswerCorrectness = await AnswerCorrectness.EvaluateAsync(test, answer).ConfigureAwait(false),
+                    Faithfulness = await Faithfulness.EvaluateAsync(answer).ConfigureAwait(false),
+                    ContextPrecision = await ContextRelevancy.EvaluateAsync(answer).ConfigureAwait(false),
+                    ContextRecall = await ContextRecall.EvaluateAsync(test, answer).ConfigureAwait(false),
                 }
             };
         }

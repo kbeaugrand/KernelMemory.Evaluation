@@ -1,4 +1,6 @@
 ﻿
+using KernelMemory.Evaluation.Evaluators;
+
 namespace KernelMemory.Evaluation;
 
 public class EvaluationMetrics
@@ -6,7 +8,7 @@ public class EvaluationMetrics
     /// <summary>
     /// Scores the relevancy of the answer according to the given question.
     /// </summary>
-    public float AnswerRelevancy { get; set; }
+    public (float Score, IEnumerable<(RelevanceEvaluation, float)> Evaluations) AnswerRelevancy { get; set; }
 
     /// <summary>
     /// Scores the semantic similarity of ground truth with generated answer.
@@ -16,20 +18,20 @@ public class EvaluationMetrics
     /// <summary>
     /// Measures answer correctness compared to ground truth as a combination of factuality and semantic similarity.
     /// </summary>
-    public float AnswerCorrectness { get; set; }
+    public (float Score, CorrectnessEvaluation? Evaluation) AnswerCorrectness { get; set; }
 
     /// <summary>
     /// Measures the factual consistency of the generated answer against the given context.
     /// </summary>
-    public float Faithfulness { get; set; }
+    public (float score, IEnumerable<StatementEvaluation>? evaluations) Faithfulness { get; set; }
 
     /// <summary>
     /// Average Precision is a metric that evaluates whether all of the relevant items selected by the model are ranked higher or not.
     /// </summary>
-    public float ContextPrecision { get; set; }
+    public (float Score, IEnumerable<ContextRelevancy>? Evaluations) ContextPrecision { get; set; }
 
     /// <summary>
     /// Estimates context recall by estimating TP and FN using annotated answer and retrieved context.
     /// </summary>
-    public float ContextRecall { get; set; }
+    public (float Score, GroundTruthClassifications? Evaluation) ContextRecall { get; set; }
 }
