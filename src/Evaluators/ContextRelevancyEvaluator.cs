@@ -26,7 +26,7 @@ public class ContextRelevancyEvaluator : EvaluationEngine
         this.kernel = kernel.Clone();
     }
 
-    public async Task<(float score, IEnumerable<ContextRelevancy>? evaluations)> EvaluateAsync(string question, string answer, IEnumerable<string> partitions)
+    public async Task<(float Score, IEnumerable<ContextRelevancy>? Evaluations)> EvaluateAsync(string question, string answer, IEnumerable<string> partitions)
     {
         var contextRelevancy = new List<ContextRelevancy>();
 
@@ -39,7 +39,7 @@ public class ContextRelevancyEvaluator : EvaluationEngine
     }
 
 
-    public async Task<(float score, IEnumerable<ContextRelevancy>? evaluations)> EvaluateAsync(MemoryAnswer answer)
+    public async Task<(float Score, IEnumerable<ContextRelevancy>? Evaluations)> EvaluateAsync(MemoryAnswer answer)
     {
         return await EvaluateAsync(answer.Question, 
                                     answer.Result, 

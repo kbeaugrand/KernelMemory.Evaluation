@@ -31,7 +31,7 @@ public class RelevanceEvaluator : EvaluationEngine
         this.textEmbeddingGenerationService = this.kernel.Services.GetRequiredService<ITextEmbeddingGenerationService>();
     }
 
-    public async Task<(float score, IEnumerable<(RelevanceEvaluation, float)> evaluations)> EvaluateAsync(string question, string answer, string context, int strictness = 3)
+    public async Task<(float Score, IEnumerable<(RelevanceEvaluation, float)> Evaluations)> EvaluateAsync(string question, string answer, string context, int strictness = 3)
     {
         var questionEmbeddings = await this.textEmbeddingGenerationService
                                             .GenerateEmbeddingsAsync([question], this.kernel)
@@ -54,7 +54,7 @@ public class RelevanceEvaluator : EvaluationEngine
         return (evaluations.Average(), generatedQuestions.Select((c, index) => (c, evaluations[index])));
     }
 
-    public async Task<(float score, IEnumerable<(RelevanceEvaluation, float)> evaluations)> EvaluateAsync(MemoryAnswer answer, int strictness = 3)
+    public async Task<(float Score, IEnumerable<(RelevanceEvaluation, float)> Evaluations)> EvaluateAsync(MemoryAnswer answer, int strictness = 3)
     {
         return await EvaluateAsync(
                 answer.Question, 
