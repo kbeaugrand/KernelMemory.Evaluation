@@ -27,7 +27,7 @@ public class ContextRecallEvaluator : EvaluationEngine
         this.kernel = kernel.Clone();
     }
 
-    public async Task<(float score, GroundTruthClassifications? evaluation)> EvaluateAsync(string question, string context, string groundOfTruth)
+    public async Task<(float Score, IEnumerable<GroundTruthClassification>? Evaluations)> EvaluateAsync(string question, string context, string groundOfTruth)
     {
         var classification = await Try(3, async (remainingTry) =>
         {
@@ -46,10 +46,10 @@ public class ContextRecallEvaluator : EvaluationEngine
             return (0, null);
         }
 
-        return ((float)classification.Evaluations.Count(c => c.Attributed > 0) / (float)classification.Evaluations.Count(), classification);
+        return ((float)classification.Evaluations.Count(c => c.Attributed > 0) / (float)classification.Evaluations.Count(), classification.Evaluations);
     }
 
-    public async Task<(float score, GroundTruthClassifications? evaluation)> EvaluateAsync(TestSet.TestSet testSet, MemoryAnswer answer)
+    public async Task<(float Score, IEnumerable<GroundTruthClassification>? Evaluations)> EvaluateAsync(TestSet.TestSet testSet, MemoryAnswer answer)
     {
         return await EvaluateAsync(testSet.Question,
                                   JsonSerializer.Serialize(answer.RelevantSources.SelectMany(c => c.Partitions.Select(x => x.Text))),

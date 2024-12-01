@@ -34,7 +34,7 @@ public class AnswerCorrectnessEvaluator : EvaluationEngine
         this.kernel = kernel.Clone();
     }
 
-    public async Task<(float score, CorrectnessEvaluation? evaluation)> EvaluateAsync(string question, string answer, IEnumerable<string> groundOfTruth)
+    public async Task<(float Score, CorrectnessEvaluation? Evaluation)> EvaluateAsync(string question, string answer, IEnumerable<string> groundOfTruth)
     {
         var statements = await Try(3, async (remainingTry) =>
         {
@@ -73,14 +73,13 @@ public class AnswerCorrectnessEvaluator : EvaluationEngine
             (float)(evaluation.TP.Count() + .5 * (evaluation.FP.Count() + evaluation.FN.Count())), evaluation);
     }
 
-    public async Task<(float score, CorrectnessEvaluation? evaluation)> EvaluateAsync(TestSet.TestSet testSet, MemoryAnswer answer)
+    public async Task<(float Score, CorrectnessEvaluation? Evaluation)> EvaluateAsync(TestSet.TestSet testSet, MemoryAnswer answer)
     {
         return await EvaluateAsync(
                 testSet.Question, 
                 answer.Result, 
                 testSet.Context)
             .ConfigureAwait(false);
-
     }
 }
 

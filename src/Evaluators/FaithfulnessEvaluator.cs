@@ -34,7 +34,7 @@ public class FaithfulnessEvaluator : EvaluationEngine
         this.kernel = kernel.Clone();
     }
 
-    public async Task<(float score, IEnumerable<StatementEvaluation>? evaluations)> EvaluateAsync(string question, string answer, string context)
+    public async Task<(float Score, IEnumerable<StatementEvaluation>? Evaluations)> EvaluateAsync(string question, string answer, string context)
     {
         var statements = await Try(3, async (remainingTry) =>
         {
@@ -74,7 +74,7 @@ public class FaithfulnessEvaluator : EvaluationEngine
         return ((float)faithfulness.Evaluations.Count(c => c.Verdict > 0) / (float)statements.Statements.Count(), faithfulness.Evaluations);
     }
 
-    public async Task<(float score, IEnumerable<StatementEvaluation>? evaluations)> EvaluateAsync(MemoryAnswer answer)
+    public async Task<(float Score, IEnumerable<StatementEvaluation>? Evaluations)> EvaluateAsync(MemoryAnswer answer)
     {
         return await EvaluateAsync(
                 question: answer.Question,
