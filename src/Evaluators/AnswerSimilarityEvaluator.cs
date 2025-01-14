@@ -8,7 +8,7 @@ namespace KernelMemory.Evaluation.Evaluators;
 
 #pragma warning disable SKEXP0001 // Type is for evaluation purposes only and is subject to change or removal in future updates. Suppress this diagnostic to proceed.
 
-internal class AnswerSimilarityEvaluator : EvaluationEngine
+public class AnswerSimilarityEvaluator : EvaluationEngine
 {
     private readonly Kernel kernel;
 
