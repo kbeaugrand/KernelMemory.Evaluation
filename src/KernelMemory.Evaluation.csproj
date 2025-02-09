@@ -36,7 +36,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
     <PackageReference Include="Microsoft.KernelMemory.Abstractions" Version="0.95.241216.2" />
     <PackageReference Include="Microsoft.KernelMemory.Core" Version="0.95.241216.2" />
-    <PackageReference Include="Microsoft.SemanticKernel.Abstractions" Version="1.32.0" />
+    <PackageReference Include="Microsoft.SemanticKernel.Abstractions" Version="1.36.0" />
     <PackageReference Include="Microsoft.SemanticKernel.Connectors.OpenAI" Version="1.32.0" />
   </ItemGroup>
 
