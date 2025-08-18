@@ -1,3 +1,8 @@
+> ## Package Deprecation Notice
+> 
+> This package is no longer maintained and has been replaced by newer evaluation libraries and tools. For up-to-date information and recommended libraries, please visit the official .NET documentation:  
+[Microsoft.Extensions.AI.Evaluation](https://github.com/dotnet/docs/blob/main/docs/ai/conceptual/evaluation-libraries.md)
+
 ## KM Evaluation
 
 [![Build & Test](https://github.com/kbeaugrand/KernelMemory.Evaluation/actions/workflows/build_tests.yml/badge.svg)](https://github.com/kbeaugrand/KernelMemory.Evaluation/actions/workflows/build_test.yml)
